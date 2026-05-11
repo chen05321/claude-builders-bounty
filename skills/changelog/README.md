@@ -1,53 +1,69 @@
 # generate-changelog
 
-Generate a structured `CHANGELOG.md` from any project's git history. Auto-categorizes commits into **Added** / **Fixed** / **Changed** / **Removed** sections.
+Generate a structured `CHANGELOG.md` from any project's git history. Auto-categorizes commits, groups by version, and produces clean markdown.
 
 ## Install (3 steps)
 
-1. Copy the script to your project:
-   ```bash
-   cp skills/changelog/changelog.sh /your/project/changelog.sh
-   ```
+```bash
+# 1. Copy the script to your project
+cp skills/changelog/changelog.py /your/project/
 
-2. Run it:
-   ```bash
-   bash changelog.sh
-   ```
+# 2. Run it
+python changelog.py
 
-3. Review the generated `CHANGELOG.md`.
+# 3. Review the generated CHANGELOG.md
+```
 
-Or use it as a Claude Code skill by copying `SKILL.md` to your project's `.claude/skills/` directory.
+Or use it as a Claude Code skill: copy `SKILL.md` to your project's `.claude/skills/` directory.
 
 ## Usage
 
 ```bash
-# Generate changelog since the last git tag
-bash changelog.sh
+# Since the last git tag
+python changelog.py
 
-# Generate changelog since a specific tag
-bash changelog.sh --since v2.0.0
+# Since a specific version
+python changelog.py --since v2.0.0
 
-# Output to a custom file
-bash changelog.sh --output RELEASES.md
+# Full history (no tags yet)
+python changelog.py --full
+
+# Custom output
+python changelog.py --output RELEASES.md
+
+# Different repo
+python changelog.py --repo /path/to/project
 ```
 
 ## How categorization works
 
-The script recognizes both **conventional commit** prefixes and **natural language**:
+### Conventional commit prefixes
+
+| Prefix | Category | Example |
+|--------|----------|---------|
+| `feat:` | **Added** | `feat: add user profile page` |
+| `fix:` | **Fixed** | `fix: handle empty state on dashboard` |
+| `refactor:` | **Changed** | `refactor: extract billing logic` |
+| `perf:` | **Changed** | `perf: cache database queries` |
+| `docs:` | **Changed** | `docs: update API reference` |
+| `style:` | **Changed** | `style: format with prettier` |
+| `test:` | **Changed** | `test: add unit tests for auth` |
+| `chore:` | **Changed** | `chore: update dependencies` |
+| `ci:` | **Changed** | `ci: add GitHub Actions workflow` |
+| `build:` | **Changed** | `build: configure esbuild` |
+| `revert:` | **Removed** | `revert: undo commit abc1234` |
+
+### Natural language fallback
 
 | Category | Matched prefixes |
 |----------|-----------------|
-| **Added** | `feat:`, `add`, `new`, `implement` |
-| **Fixed** | `fix:`, `bugfix`, `hotfix`, `patch`, `resolve` |
-| **Changed** | `refactor:`, `update`, `change`, `improve`, `enhance`, `perf:`, `chore:`, `ci:`, `docs:`, `style:`, `build:` |
-| **Removed** | `remove`, `delete`, `deprecate`, `revert` |
+| **Added** | `Add`, `New`, `Implement`, `Create`, `Introduce`, `Support`, `Enable` |
+| **Fixed** | `Fix`, `Patch`, `Hotfix`, `Bugfix`, `Resolve`, `Correct` |
+| **Removed** | `Remove`, `Delete`, `Drop`, `Deprecate`, `Revert`, `Cleanup`, `Purge` |
+| **Changed** | `Update`, `Change`, `Refactor`, `Improve`, `Enhance`, `Upgrade`, `Migrate`, `Redesign`, `Simplify`, `Bump`, `Upgrade` |
 | **Other** | Everything else |
-
-## Sample output
-
-See [sample-output.md](sample-output.md) for a real example generated from this repository.
 
 ## Requirements
 
-- bash 4+
+- Python 3.8+
 - git
